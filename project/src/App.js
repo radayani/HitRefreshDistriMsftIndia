@@ -66,7 +66,7 @@ class App extends Component {
     console.log(this.state.empId);
 
     if (this.state.locationDefault !== -1 && this.state.buildingDefault !== -1 && this.state.empId !== null) {
-      fetch(`/api/validate?id=${this.state.empId}&city=${this.state.locationDefault}`, {
+      fetch(`/api/validate?id=${this.state.empId}&location=${this.state.locationDefault}&building=${this.state.buildingDefault}`, {
 
         headers: {
           'Content-Type': 'application/json',
