@@ -74,7 +74,7 @@ app.get('/api/validate', (req, res, err) => {
                     res.status(200).json({ "message": error + "...msg" }).end();
 
                   }
-                })
+                });
               }
             }
           }
