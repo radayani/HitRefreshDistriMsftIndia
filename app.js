@@ -59,14 +59,17 @@ app.get('/api/validate', (req, res, err) => {
                 var entGen = azure.TableUtilities.entityGenerator;
 
                 var task = {
-                  PartitionKey: entGen.String(req.query.city),
+                  PartitionKey: "A",
                   RowKey: entGen.String(req.query.id),
                   Received: true,
                   CollectedFrom: req.query.location + "_" + req.query.building
                 }
                 tableService.mergeEntity('employees', task, function (err, result, res) {
                   if (!error) {
-                    // entity updated
+                    Console.log("Entry updated" + result);
+                  }
+                  else {
+                    Console.log(error + "= Something went wrong!");
                   }
                 })
               }
