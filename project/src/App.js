@@ -75,7 +75,7 @@ class App extends Component {
         }
       })
       
-      .then((response) => { console.log(response.json());  }) 
+      .then((response) => { console.log(response);  }) 
         // .then(function (response) {
 
         //   if (response.status === 409) {
