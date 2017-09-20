@@ -10,8 +10,6 @@
 #data files
 /files
 
-#db secrets
-/secrets.json
 
 #production
 /build
