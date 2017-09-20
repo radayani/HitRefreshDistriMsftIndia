@@ -45,7 +45,7 @@ app.get('/api/validate', (req, res, err) => {
       }
       else {
         console.log("table already existed!")
-        tableService.retrieveEntity('employees',  "A", req.query.id + "", function (error, result, response) {
+        tableService.retrieveEntity('employees', "A", req.query.id + "", function (error, result, response) {
           if (!error) {
             // result contains the entity
             if (result) {
@@ -61,18 +61,18 @@ app.get('/api/validate', (req, res, err) => {
                   PartitionKey: "A",
                   RowKey: entGen.String(req.query.id),
                   Received: true,
-                  CollectedFrom:  entGen.String(req.query.location + "_" + req.query.building)
+                  CollectedFrom: entGen.String(req.query.location + "_" + req.query.building)
                 }
                 tableService.mergeEntity('employees', task, function (err, result, res) {
                   if (!error) {
-                    Console.log("Entry updated" + result);
-                res.status(200).json({ "message": "please provide the book" }).end();
-                
+                    console.log("Entry updated" + result);
+                    res.status(200).json({ "message": "please provide the book" }).end();
+
                   }
                   else {
-                    Console.log(error + "= Something went wrong!");
-                res.status(200).json({ "message": error + "...msg" }).end();
-                
+                    console.log(error + "= Something went wrong!");
+                    res.status(200).json({ "message": error + "...msg" }).end();
+
                   }
                 })
               }
