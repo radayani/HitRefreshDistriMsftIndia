@@ -61,7 +61,7 @@ app.get('/api/validate', (req, res, err) => {
                   PartitionKey: "A",
                   RowKey: entGen.String(req.query.id),
                   Received: true,
-                  CollectedFrom: req.query.location + "_" + req.query.building
+                  CollectedFrom:  entGen.String(req.query.location + "_" + req.query.building)
                 }
                 tableService.mergeEntity('employees', task, function (err, result, res) {
                   if (!error) {
