@@ -17,5 +17,9 @@
     "nodemon": "^1.12.1",
     "serve-favicon": "~2.4.2",
     "type-of-is": "^3.5.1"
+  },
+  "engines": {
+  "node": ">= 8.0.0",
+  "npm": ">= 5.0.0"
   }
 }
