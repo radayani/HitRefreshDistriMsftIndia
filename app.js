@@ -13,10 +13,6 @@ var accessKey = jsonSecrets.storageAccountKey; // '5cBnLmOhF5AA/RC2y2TRYjfATfj+G
 var storageAccount = jsonSecrets.storageAccountName; //'hitrefreshstorage'
 var tableService = azure.createTableService(storageAccount, accessKey);
 
-
-
-
-
 var index = require('./routes/index');
 var users = require('./routes/users');
 
@@ -49,7 +45,7 @@ app.get('/api/validate', (req, res, err) => {
       }
       else {
         console.log("table already existed!")
-        tableService.retrieveEntity('employees', req.query.city + "", req.query.id + "", function (error, result, response) {
+        tableService.retrieveEntity('employees',  "A", req.query.id + "", function (error, result, response) {
           if (!error) {
             // result contains the entity
             if (result) {
@@ -65,7 +61,8 @@ app.get('/api/validate', (req, res, err) => {
                 var task = {
                   PartitionKey: entGen.String(req.query.city),
                   RowKey: entGen.String(req.query.id),
-                  Received: true
+                  Received: true,
+                  CollctedFrom: req.query.location + " " + req.query.building
                 }
                 tableService.mergeEntity('employees', task, function (err, result, res) {
                   if (!error) {
