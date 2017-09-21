@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var azure = require('azure-storage');
 var fs = require('fs');
-var stringifiedJson = fs.readFileSync('../getValues.json', 'utf8');
+var stringifiedJson = fs.readFileSync('getValues.json', 'utf8');
 var jsonSecrets = JSON.parse(stringifiedJson);
 
 var accessKey = jsonSecrets.storageAccountKey; // '5cBnLmOhF5AA/RC2y2TRYjfATfj+GOUOMT4hsAlM+CMDQaLDMrrY7GOLgdEA0/wSJeGVEOCtwcmU2U3iCBotXg==';
@@ -34,7 +34,7 @@ app.use('/', index);
 app.use('/users', users);
 
 
-//*******GET AVAILABLE VENUE API*********TESTED**//
+//*******VALIDATE API**********//
 app.get('/api/validate', (req, res, err) => {
   tableService.createTableIfNotExists('employees', function (error, result, response) {
     if (!error) {
@@ -61,9 +61,9 @@ app.get('/api/validate', (req, res, err) => {
                   PartitionKey: "A",
                   RowKey: entGen.String(req.query.id),
                   Received: true,
-                  CollectedFrom: entGen.String(req.query.location)
+                  CollectedFrom: entGen.String(req.query.location + " " + req.query.building)
                 }
-                tableService.mergeEntity('employees', task, function (err, result, res) {
+                tableService.mergeEntity('employees', task, function (err, result, respose) {
                   if (!error) {
                     console.log("Entry updated" + result);
                     res.status(200).json({ "message": "please provide the book" }).end();
