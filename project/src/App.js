@@ -248,7 +248,7 @@ class App extends Component {
     this.setState({ empIdNotSetDialogOpen: false });
   }
   handleClose() {
-    this.setState({ open: false, empId: '' });
+    this.setState({ open: false, empId: '', Message:"" });
   }
   render() {
     const actions = [
