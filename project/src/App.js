@@ -74,16 +74,26 @@ class App extends Component {
 
         }
       })
-      
-      .then((response) => { 
-        console.log(response.status);
-        console.log("\n--") 
-        console.log(response.statusText);
-        console.log("\n--") 
-        
-        console.log(response.json().message);
-        this.state.Message = response.json().message;
-      }) 
+        .then(response =>
+          response.json().then(data => ({
+            data: data,
+            status: response.status
+          })))
+        .then(res => {
+          this.setState({ Message: res.data.message }, function () {
+            console.log(this.state.Message);
+
+          });
+          console.log(res.status, res.data.message);
+        })
+        // .then(data => {
+        //   console.log(response.status);
+        //   console.log("\n--")
+        //   console.log(response.statusText);
+        //   console.log("\n--");
+        //   console.log(response.body());
+        //   // this.setState({Message:response.json().message}) ;
+        // })
         // .then(function (response) {
 
         //   if (response.status === 409) {
@@ -218,7 +228,7 @@ class App extends Component {
           });
         break;
       default:
-          this.setState({locationDefault:-1, buildingDefault:-1})
+        this.setState({ locationDefault: -1, buildingDefault: -1 })
     }
   }
 
@@ -301,7 +311,7 @@ class App extends Component {
             }, this)}
           </DropDownMenu>
         </MuiThemeProvider>
-<br/> <br/>
+        <br /> <br />
         <MuiThemeProvider muiTheme={muiTheme}>
 
           <TextField className="App-intro"

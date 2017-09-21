@@ -50,7 +50,7 @@ app.get('/api/validate', (req, res, err) => {
             // result contains the entity
             if (result) {
               if (result.Received['_'] == true)
-                res.status(409).json({ "message": "already taken" }).end();
+                res.status(409).json({ "message": "Book Already Collected!" }).end();
               else {
                 console.log("FouND!!");
                 console.log(result.Received['_']);
@@ -66,7 +66,7 @@ app.get('/api/validate', (req, res, err) => {
                 tableService.mergeEntity('employees', task, function (err, result, respose) {
                   if (!error) {
                     console.log("Entry updated" + result);
-                    res.status(200).json({ "message": "please provide the book" }).end();
+                    res.status(200).json({ "message": "Please Provide the Book." }).end();
 
                   }
                   else {
@@ -80,7 +80,7 @@ app.get('/api/validate', (req, res, err) => {
           }
           else {
             console.log("Record Not Found for this employee id !!");
-            res.status(404).json({ "message": "employee not found in db" }).end();
+            res.status(404).json({ "message": "Employee with this ID Not Found in DB" }).end();
           }
         });
 
