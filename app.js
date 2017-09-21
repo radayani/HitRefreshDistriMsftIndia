@@ -9,7 +9,7 @@ appInsights.setup("53191698-6269-4b46-b617-9d9624b6726d")
   .setAutoCollectExceptions(true)
   .setAutoCollectDependencies(true)
   .start();
-var client = appInsights.getClient("53191698-6269-4b46-b617-9d9624b6726d");
+var client = appInsights.defaultClient;
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
