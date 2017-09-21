@@ -66,7 +66,7 @@ class App extends Component {
     console.log(this.state.empId);
 
     if (this.state.locationDefault !== -1 && this.state.buildingDefault !== -1 && this.state.empId !== null) {
-      fetch(`/api/validate?id=${this.state.empId}&location=${this.state.locationDefault}`, {
+      fetch(`/api/validate?id=${this.state.empId}&location=${this.state.locationDefault}&building=${this.state.buildingDefault}`, {
 
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +75,15 @@ class App extends Component {
         }
       })
       
-      .then((response) => { console.log(response);  }) 
+      .then((response) => { 
+        console.log(response.status);
+        console.log("\n--") 
+        console.log(response.statusText);
+        console.log("\n--") 
+        
+        console.log(response.json().message);
+        this.state.Message = response.json().message;
+      }) 
         // .then(function (response) {
 
         //   if (response.status === 409) {
@@ -98,7 +106,7 @@ class App extends Component {
         //   }
 
         // })
-        .then(this.setState({ locationNotSetDialogOpen: false, buildingNotSetDialogOpen: false, empIdNotSetDialogOpen: false, Message: this.message, open: true }))
+        .then(this.setState({ locationNotSetDialogOpen: false, buildingNotSetDialogOpen: false, empIdNotSetDialogOpen: false, open: true }))
         .catch(function (err) {
           console.log('Fetch Error :-S', err);
         });
