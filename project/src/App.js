@@ -124,11 +124,11 @@ class App extends Component {
 
         }
       })
-        .then(response => console.log(response.json()))
-          // response.json().then(data => ({
-          //   data: data,
-          //   status: response.status
-          // })))
+        .then(response =>
+          response.json().then(data => ({
+            data: data,
+            status: response.status
+          })))
         .then(res => {
           this.setState({ Message: res.data.message }, function () {
             console.log(this.state.Message);
