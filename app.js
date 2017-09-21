@@ -1,3 +1,15 @@
+
+// added Application Insights to send events, traces and catch exception logs
+const appInsights = require("applicationinsights");
+appInsights.setup("53191698-6269-4b46-b617-9d9624b6726d")
+  .setAutoCollectConsole(true)
+  .setAutoDependencyCorrelation(false)
+  .setAutoCollectRequests(true)
+  .setAutoCollectPerformance(true)
+  .setAutoCollectExceptions(true)
+  .setAutoCollectDependencies(true)
+  .start();
+var client = appInsights.getClient("53191698-6269-4b46-b617-9d9624b6726d");
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -45,16 +57,15 @@ app.get('/api/validate', (req, res, err) => {
       }
       else {
         console.log("table already existed!")
-        tableService.retrieveEntity('employees', "A", req.query.id + "", function (error, result, response) {
-          if (!error) {
+        tableService.retrieveEntity('employees', "A", req.query.id + "", function (err, result, response) {
+          if (!err) {
             // result contains the entity
             if (result) {
-              if (result.Received['_'] == true)
+              if (result.Received['_'] == true) {
+                client.trackEvent("book has already been collected by the employee",  { "result": result, "response":response, "EmployeeId: ": req.query.id ,  "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
                 res.status(409).json({ "message": "Book Already Collected!" }).end();
+              }
               else {
-                console.log("FouND!!");
-                console.log(result.Received['_']);
-                console.log("is this getting printed");
                 var entGen = azure.TableUtilities.entityGenerator;
 
                 var task = {
@@ -65,20 +76,26 @@ app.get('/api/validate', (req, res, err) => {
                 }
                 tableService.mergeEntity('employees', task, function (err, result, respose) {
                   if (!error) {
-                    console.log("Entry updated" + result);
+                    client.trackEvent("book has been provided to the employee", { "result": result, "response":response, "EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
+
                     res.status(200).json({ "message": "Please Provide the Book." }).end();
 
                   }
                   else {
+                    client.trackException("Something Went Wrong: " + err, {"error":err,"EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
                     console.log(error + "= Something went wrong!");
-                    res.status(200).json({ "message": error + "...msg" }).end();
+                    res.status(200).json({ "message": err + "...msg" }).end();
 
                   }
                 });
               }
             }
+            else{
+              client.trackException("Result not created",{"error":err,"result":result, "EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
+            }
           }
           else {
+            client.trackException("Record Not Found for this employee id",{"error":err,"EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
             console.log("Record Not Found for this employee id !!");
             res.status(404).json({ "message": "Employee with this ID Not Found in DB" }).end();
           }
@@ -88,6 +105,7 @@ app.get('/api/validate', (req, res, err) => {
 
     }
     else {
+      client.trackException("table which stores the employee data does not already exists",{"error":error,"EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
       console.log("table which stores the employee data does not already exists!");
     }
   });
