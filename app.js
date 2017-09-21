@@ -143,12 +143,13 @@ app.get('/api/login', (req, res, err) => {
                 }
                 tableService.mergeEntity('distributors', task, function (err, result, response) {
                   if (!error) {
-                    console.log("Entry updated" + result);
+                    
+                    console.log(`Entry updated in Db for the issue address. Login Success. IssuerId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building }`);
                     res.status(200).json({ "message": "Login Success!" }).end();
 
                   }
                   else {
-                    console.log(error + "= Something went wrong!");
+                    console.log(`Something went wrong while trying Issuer Login. issuerId: ${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building}`);
                     res.status(200).json({ "message": error + "...msg" }).end();
 
                   }
@@ -157,8 +158,8 @@ app.get('/api/login', (req, res, err) => {
             }
           }
           else {
-            console.log("Record Not Found for this user id !!");
-            res.status(404).json({ "message": "user id not found in db" }).end();
+            console.log(`Record Not Found for this issuer id.  issuer Id: ${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.Building}`);
+            res.status(404).json({ "message": "issuer id not found in db" }).end();
           }
         });
 
