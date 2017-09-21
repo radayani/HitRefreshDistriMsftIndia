@@ -94,6 +94,68 @@ app.get('/api/validate', (req, res, err) => {
 
 });
 
+//**********USER LOGIN API ************/
+// AUTHOR: Meghna Masand
+app.get('/api/login', (req, res, err) => {
+  tableService.createTableIfNotExists('distributors', function (error, result, response) {
+    if (!error) {
+      // table exists or created
+      // result contains true if created; false if already exists
+      if (result.created) {
+        console.log("distributor new table is created !");
+      }
+      else {
+        console.log("distributor table already existed!")
+        tableService.retrieveEntity('distributors', "A", req.query.id + "", function (error, result, response) {
+          if (!error) {
+            // result contains the entity
+            if (result) {
+              //console.log(result);
+              {
+                console.log("FouND!!");
+                //console.log(result.Received['_']);
+                //console.log("is this getting printed");
+                var entGen = azure.TableUtilities.entityGenerator;
+                console.log(req.query.Building);
+                var task = {
+                  PartitionKey: "A",
+                  RowKey: entGen.String(req.query.id),
+                  Location: entGen.String(req.query.location),
+                  Building: entGen.String(req.query.Building)
+                }
+                tableService.mergeEntity('distributors', task, function (err, result, response) {
+                  if (!error) {
+                    console.log("Entry updated" + result);
+                    res.status(200).json({ "message": "Login Success!" }).end();
+
+                  }
+                  else {
+                    console.log(error + "= Something went wrong!");
+                    res.status(200).json({ "message": error + "...msg" }).end();
+
+                  }
+                });
+              }
+            }
+          }
+          else {
+            console.log("Record Not Found for this user id !!");
+            res.status(404).json({ "message": "user id not found in db" }).end();
+          }
+        });
+
+      }
+
+    }
+    else {
+      console.log("table which stores the user id data does not already exists!");
+    }
+  });
+
+});
+
+
+
 
 
 // catch 404 and forward to error handler

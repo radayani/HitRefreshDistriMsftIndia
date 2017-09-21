@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
-import { cyan700, blue100, fullWhite, redA700 } from 'material-ui/styles/colors';
+import { cyan700, blue100, blue200, fullWhite, redA700 } from 'material-ui/styles/colors';
 import FooterContent from './FooterContent';
 import RaisedButton from 'material-ui/RaisedButton';
 import MenuItem from 'material-ui/MenuItem';
@@ -25,7 +25,8 @@ const muiTheme = getMuiTheme({
 });
 
 const style = {
-  margin: 12,
+  margin: 1,
+
   customWidth: {
     width: 200
   }
@@ -39,7 +40,7 @@ class App extends Component {
     this.state = {
       validated: false,
       foundInDb: false,
-      empId: null,
+      empId: "",
       city: null,
       locationDefault: -1,
       locations: [{ "loc": "Hyderabad" },
@@ -55,17 +56,66 @@ class App extends Component {
       buildings: [],
       locationNotSetDialogOpen: false,
       buildingNotSetDialogOpen: false,
+      issuerIdNotSetDialogOpen: false,
       empIdNotSetDialogOpen: false,
-      Message: "default",
+      Message: "",
+      loginPage: true,
+      issuerId: "",
+      issuerIdWrong:false
 
     }
   }
+
+
+  handleLoginButton = (x) => {
+    if (this.state.issuerId !== "" && this.state.locationDefault !== -1 && this.state.buildingDefault !== -1) {
+
+      fetch(`/api/login?id=${this.state.issuerId}&location=${this.state.locationDefault}&Building=${this.state.buildingDefault}`, {
+
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+
+        }
+      })
+        .then(response =>
+          response.json().then(data => ({
+            data: data,
+            status: response.status
+          })))
+        .then(res => {
+          if(res.status == 200)
+          this.setState({ loginPage: false }, function () 
+            { console.log("changed loginPage state") })
+          else
+          this.setState({ issuerIdWrong: true, issuerIdNotSetDialogOpen:true }, function () 
+          { console.log("WRONG!!!!!") })
+            
+        })
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+
+
+    }
+    if (this.state.issuerId === "")
+      this.setState({ issuerIdNotSetDialogOpen: true }, function () { console.log("issuerIdNotSetDialogOpen " + this.state.issuerIdNotSetDialogOpen + "issuerIdNotSetDialogOpen:true"); });
+
+    if (this.state.locationDefault === -1)
+      this.setState({ locationNotSetDialogOpen: true }, function () { console.log("locationDefault " + this.state.locationDefault + "locationNotSetDialogOpen:true"); });
+    if (this.state.buildingDefault === -1)
+      this.setState({ buildingNotSetDialogOpen: true }, function () { console.log("buildingDefault" + this.state.buildingDefault + "buildingNotSetDialogOpen:true"); });
+
+  }
+
+
+
 
   handleValidateButton = (x) => {
 
     console.log(this.state.empId);
 
-    if (this.state.locationDefault !== -1 && this.state.buildingDefault !== -1 && this.state.empId !== null) {
+    if (this.state.locationDefault !== -1 && this.state.buildingDefault !== -1 && this.state.empId !== "") {
       fetch(`/api/validate?id=${this.state.empId}&location=${this.state.locationDefault}&building=${this.state.buildingDefault}`, {
 
         headers: {
@@ -86,36 +136,6 @@ class App extends Component {
           });
           console.log(res.status, res.data.message);
         })
-        // .then(data => {
-        //   console.log(response.status);
-        //   console.log("\n--")
-        //   console.log(response.statusText);
-        //   console.log("\n--");
-        //   console.log(response.body());
-        //   // this.setState({Message:response.json().message}) ;
-        // })
-        // .then(function (response) {
-
-        //   if (response.status === 409) {
-        //     this.message = 'Already Provided With a Book';
-        //     console.log('Already Provided With a Book' + response.status);
-        //   }
-        //   else if (response.status === 404) {
-        //     this.message = 'Employee not found in the Database';
-        //     // this.setState({ employeeDoesntExist: true, open:true });
-        //     console.log('Employee not found in the Db' + response.status);
-        //   }
-        //   else if (response.status === 200) {
-        //     this.message = 'Please give away the book to the employee';
-
-        //     // this.setState({ alreadyProvidedBook: false, open:true });
-        //     console.log('Please provide the book to the employee' + response.status);
-        //   }
-        //   else {
-        //     console.log('An unidentified operation has occurred. Please contact Garage Team for help');
-        //   }
-
-        // })
         .then(this.setState({ locationNotSetDialogOpen: false, buildingNotSetDialogOpen: false, empIdNotSetDialogOpen: false, open: true }))
         .catch(function (err) {
           console.log('Fetch Error :-S', err);
@@ -123,14 +143,14 @@ class App extends Component {
 
 
     }
-    if (this.state.locationDefault === -1)
-      this.setState({ locationNotSetDialogOpen: true }, function () { console.log("locationDefault " + this.state.locationDefault + "locationNotSetDialogOpen:true"); });
-    if (this.state.buildingDefault === -1)
-      this.setState({ buildingNotSetDialogOpen: true }, function () { console.log("buildingDefault" + this.state.buildingDefault + "buildingNotSetDialogOpen:true"); });
-    if (this.state.empId === null)
+    if (this.state.empId === "")
       this.setState({ empIdNotSetDialogOpen: true }, function () { console.log("empid default" + this.state.empId + "empIdNotSetDialogOpen:true"); });
   }
-
+  handleIssuerIdValueChange(event, newValue) {
+    this.setState({ issuerId: newValue }, function () {
+      console.log(this.state.issuerId);
+    });
+  }
   handleEmployeeIdValueChange(event, newValue) {
     this.setState({ empId: newValue }, function () {
       console.log(this.state.empId);
@@ -244,11 +264,14 @@ class App extends Component {
   handleBuildingDialogRequestClose() {
     this.setState({ buildingNotSetDialogOpen: false });
   }
+  handleIssuerIdDialogRequestClose() {
+    this.setState({ issuerIdNotSetDialogOpen: false,issuerIdWrong:false });
+  }
   handleEmpIdDialogRequestClose() {
     this.setState({ empIdNotSetDialogOpen: false });
   }
   handleClose() {
-    this.setState({ open: false, empId: '', Message:"" });
+    this.setState({ open: false, empId: '', Message: "" });
   }
   render() {
     const actions = [
@@ -263,77 +286,106 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
+          {/* <h1> <br/><span style={{color:blue100}}>Hit Refresh</span><br/></h1> <h3> <span style={{color:blue100}}><pre>     - Satya Nadella</pre></span></h3><h1>Book<br/>Distribution<br/></h1> */}
+          
           <img src='/imgs/satya.png' className="App-logo" alt="logo" />
-          {/* <h1> <br/>Book <br/>Distribution</h1> */}
+          {/* <p> Distribution</p> */}
+        
         </div>
         <div className="App-footer" style={{ backgroundColor: blue100 }}>
           <FooterContent />
         </div>
-        {/* <MuiThemeProvider muiTheme={muiTheme}>
-          <TextField className="App-intro"
-            hintText="Login Id"
-            floatingLabelText="Login Id"
-            type="password"
-          />
-        </MuiThemeProvider> */}
+        {this.state.loginPage &&
+          <div>
 
-        <MuiThemeProvider muiTheme={muiTheme}>
+            <MuiThemeProvider muiTheme={muiTheme}>
 
-          <DropDownMenu
-            style={style.customWidth}
-            onChange={this.handleLocationSelection.bind(this)}
-            autoWidth={true}
-            maxHeight={250}
-            value={this.state.locationDefault}  >
+              <DropDownMenu
+                style={style.customWidth}
+                onChange={this.handleLocationSelection.bind(this)}
+                autoWidth={true}
+                maxHeight={250}
+                value={this.state.locationDefault}  >
 
-            <MenuItem value={-1} primaryText="Select Location" />
-            {this.state.locations.map(function (elem, i) {
-              return (
-                <MenuItem value={elem.loc} primaryText={elem.loc} key={i} />
-              );
-            }, this)}
+                <MenuItem value={-1} primaryText="Select Location" />
+                {this.state.locations.map(function (elem, i) {
+                  return (
+                    <MenuItem value={elem.loc} primaryText={elem.loc} key={i} />
+                  );
+                }, this)}
 
-          </DropDownMenu>
-        </MuiThemeProvider>
+              </DropDownMenu>
+            </MuiThemeProvider>
 
-        <MuiThemeProvider muiTheme={muiTheme}>
-          <DropDownMenu
-            style={style.customWidth}
-            onChange={this.handleBuildingSelection.bind(this)}
-            autoWidth={true}
-            value={this.state.buildingDefault}
-          >
-            <MenuItem value={-1} primaryText="Select Building" />
-            {this.state.buildings.map(function (elem, i) {
-              return (
-                <MenuItem value={elem.building} primaryText={elem.building} key={i} />
-              );
-            }, this)}
-          </DropDownMenu>
-        </MuiThemeProvider>
-        <br /> <br />
-        <MuiThemeProvider muiTheme={muiTheme}>
+            <MuiThemeProvider muiTheme={muiTheme}>
+              <DropDownMenu
+                style={style.customWidth}
+                onChange={this.handleBuildingSelection.bind(this)}
+                autoWidth={true}
+                value={this.state.buildingDefault}
+              >
+                <MenuItem value={-1} primaryText="Select Building" />
+                {this.state.buildings.map(function (elem, i) {
+                  return (
+                    <MenuItem value={elem.building} primaryText={elem.building} key={i} />
+                  );
+                }, this)}
+              </DropDownMenu>
+            </MuiThemeProvider>
+            <br /><br />
 
-          <TextField className="App-intro"
-            hintText="Employee Id"
-            floatingLabelText="Employee Id"
-            value={this.state.empId}
-            onChange={this.handleEmployeeIdValueChange.bind(this)}
+            <MuiThemeProvider muiTheme={muiTheme}>
+              <TextField className="App-intro"
+                hintText="Enter your 7-digit login code"
+                style={{ marginRight: 15 }}
+                onChange={this.handleIssuerIdValueChange.bind(this)}
+                floatingLabelText="Issuer Login Id"
+                type="password"
+              />
+            </MuiThemeProvider>
 
-            type="text"
-          />
-        </MuiThemeProvider>
-        <MuiThemeProvider muiTheme={muiTheme}>
+            <MuiThemeProvider muiTheme={muiTheme}>
 
-          <RaisedButton
-            label="Validate"
-            style={style}
-            keyboardFocused={true}
-            onTouchTap={this.handleValidateButton.bind(this, "dsfdsfdsf")}
+              <RaisedButton
+                label="Login"
+                style={style}
+                keyboardFocused={true}
+                onTouchTap={this.handleLoginButton.bind(this, "dsfdsfdsf")}
 
-          />
+              />
+            </MuiThemeProvider>
+          </div>
+        }
+        {!this.state.loginPage &&
+          <div>
+            <MuiThemeProvider muiTheme={muiTheme}>
 
-        </MuiThemeProvider>
+
+              <TextField className="App-intro"
+                hintText="Employee Id"
+                style={{ marginRight: 15 }}
+                
+                floatingLabelText="Employee Id"
+                value={this.state.empId}
+                onChange={this.handleEmployeeIdValueChange.bind(this)}
+
+                type="text"
+              />
+            </MuiThemeProvider>
+            <MuiThemeProvider muiTheme={muiTheme}>
+
+              <RaisedButton
+                label="Validate"
+                style={style}
+                keyboardFocused={true}
+                onTouchTap={this.handleValidateButton.bind(this, "dsfdsfdsf")}
+
+              />
+
+
+            </MuiThemeProvider>
+          </div>
+        }
         <MuiThemeProvider muiTheme={muiTheme}>
 
           <Dialog
@@ -345,6 +397,39 @@ class App extends Component {
           </Dialog>
         </MuiThemeProvider>
 
+        {(this.state.issuerIdNotSetDialogOpen && this.state.issuerIdWrong)
+          &&
+
+          <MuiThemeProvider muiTheme={muiTheme}>
+
+            <Snackbar
+              style={{ width: 300 }}
+              contentStyle={{ color: fullWhite }}
+              bodyStyle={{ backgroundColor: redA700 }}
+              open={this.state.issuerIdNotSetDialogOpen}
+              message="Incorrect Issuer Id"
+              autoHideDuration={2100}
+              onRequestClose={this.handleIssuerIdDialogRequestClose.bind(this)} />
+          </MuiThemeProvider>
+
+        }
+
+        {(this.state.issuerIdNotSetDialogOpen && !this.state.issuerIdWrong)
+          &&
+
+          <MuiThemeProvider muiTheme={muiTheme}>
+
+            <Snackbar
+              style={{ width: 300 }}
+              contentStyle={{ color: fullWhite }}
+              bodyStyle={{ backgroundColor: redA700 }}
+              open={this.state.issuerIdNotSetDialogOpen}
+              message="Please fill Issuer Id Provided to You"
+              autoHideDuration={2000}
+              onRequestClose={this.handleIssuerIdDialogRequestClose.bind(this)} />
+          </MuiThemeProvider>
+
+        }
 
         {this.state.empIdNotSetDialogOpen
           &&
@@ -352,12 +437,12 @@ class App extends Component {
           <MuiThemeProvider muiTheme={muiTheme}>
 
             <Snackbar
-              style={{ width: 210 }}
+              style={{ width: 300 }}
               contentStyle={{ color: fullWhite }}
               bodyStyle={{ backgroundColor: redA700 }}
               open={this.state.empIdNotSetDialogOpen}
-              message="Emp Id NOT set"
-              autoHideDuration={1500}
+              message="Please fill the Employee's ID"
+              autoHideDuration={2000}
               onRequestClose={this.handleEmpIdDialogRequestClose.bind(this)} />
           </MuiThemeProvider>
 
@@ -368,13 +453,13 @@ class App extends Component {
 
 
             <Snackbar
-              style={{ width: 210 }}
+              style={{ width: 300 }}
               contentStyle={{ color: fullWhite }}
               bodyStyle={{ backgroundColor: redA700 }}
 
               open={this.state.buildingNotSetDialogOpen}
-              message="Building NOT set"
-              autoHideDuration={1000}
+              message="Please select your BUILDING"
+              autoHideDuration={1400}
               onRequestClose={this.handleBuildingDialogRequestClose.bind(this)} />
           </MuiThemeProvider>
         }
@@ -384,13 +469,13 @@ class App extends Component {
           <MuiThemeProvider muiTheme={muiTheme}>
 
             <Snackbar
-              style={{ width: 210 }}
+              style={{ width: 300 }}
               contentStyle={{ color: fullWhite }}
               bodyStyle={{ backgroundColor: redA700 }}
-              message="Location NOT set"
+              message="Please select your LOCATION"
 
               open={this.state.locationNotSetDialogOpen}
-              autoHideDuration={500}
+              autoHideDuration={700}
               onRequestClose={this.handleLocationDialogRequestClose.bind(this)} />
           </MuiThemeProvider>
 
