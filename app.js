@@ -62,7 +62,7 @@ app.get('/api/validate', (req, res, err) => {
             // result contains the entity
             if (result) {
               if (result.Received['_'] == true) {
-                client.trackEvent("book has already been collected by the employee",  { "result": result, "response":response, "EmployeeId: ": req.query.id ,  "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
+                console.log(`book has already been collected by the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building }`);
                 res.status(409).json({ "message": "Book Already Collected!" }).end();
               }
               else {
@@ -76,14 +76,14 @@ app.get('/api/validate', (req, res, err) => {
                 }
                 tableService.mergeEntity('employees', task, function (err, result, respose) {
                   if (!error) {
-                    client.trackEvent("book has been provided to the employee", { "result": result, "response":response, "EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
+                    console.log(`book has been provided to the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building }`);
 
                     res.status(200).json({ "message": "Please Provide the Book." }).end();
 
                   }
                   else {
-                    client.trackException("Something Went Wrong: " + err, {"error":err,"EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
-                    console.log(error + "= Something went wrong!");
+                    console.log(`Something Went Wrong: err:  \n EmployeeId: ${req.query.id} IssueLocation: ${req.query.location} IssueBuilding: ${req.query.building}`);
+                    // console.log(error + "= Something went wrong!");
                     res.status(200).json({ "message": err + "...msg" }).end();
 
                   }
@@ -91,12 +91,12 @@ app.get('/api/validate', (req, res, err) => {
               }
             }
             else{
-              client.trackException("Result not created",{"error":err,"result":result, "EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
+              console.log(`Result not created. error:  EmployeeId: ${req.query.id} \n IssueLocation: ${req.query.location} IssueBuilding: ${req.query.building }`);
             }
           }
           else {
-            client.trackException("Record Not Found for this employee id",{"error":err,"EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
-            console.log("Record Not Found for this employee id !!");
+            console.log(`Record Not Found for this employee id.  empId: ${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building}`);
+            // console.log("Record Not Found for this employee id !!");
             res.status(404).json({ "message": "Employee with this ID Not Found in DB" }).end();
           }
         });
@@ -105,8 +105,8 @@ app.get('/api/validate', (req, res, err) => {
 
     }
     else {
-      client.trackException("table which stores the employee data does not already exists",{"error":error,"EmployeeId: ": req.query.id , "IssueLocation": req.query.location ,  "IssueBuilding": req.query.building });
-      console.log("table which stores the employee data does not already exists!");
+      console.log(`table which stores the employee data does not already exists EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n  IssueBuilding: ${req.query.building}`);
+      // console.log("table which stores the employee data does not already exists!");
     }
   });
 
