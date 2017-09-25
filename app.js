@@ -78,7 +78,7 @@ app.get('/api/validate', (req, res, err) => {
                   if (!error) {
                     console.log(`book has been provided to the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building }`);
 
-                    res.status(200).json({ "message": `Please Provide the Book to ${result.Alias['_']}` }).end();
+                    res.status(200).json({ "message": `Confirm Name & then Provide the Book to ${result.Alias['_']}` }).end();
 
                   }
                   else {
