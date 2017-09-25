@@ -27,9 +27,12 @@ const muiTheme = getMuiTheme({
 const style = {
   margin: 1,
   marginBottom:70,
-  customWidth: {
-    width: 200
-  }
+  customWidthBuilding: {
+    width: 350
+  },
+  customWidthLocation: {
+    width: 180
+  }  
 };
 
 
@@ -274,7 +277,7 @@ class App extends Component {
             <MuiThemeProvider muiTheme={muiTheme}>
 
               <DropDownMenu
-                style={style.customWidth}
+                style={style.customWidthLocation}
                 onChange={this.handleLocationSelection.bind(this)}
                 autoWidth={true}
                 maxHeight={250}
@@ -292,7 +295,7 @@ class App extends Component {
 
             <MuiThemeProvider muiTheme={muiTheme}>
               <DropDownMenu
-                style={style.customWidth}
+                style={style.customWidthBuilding}
                 onChange={this.handleBuildingSelection.bind(this)}
                 autoWidth={true}
                 value={this.state.buildingDefault}
@@ -309,8 +312,8 @@ class App extends Component {
 
             <MuiThemeProvider muiTheme={muiTheme}>
               <TextField className="App-intro"
-                hintText="Enter your 7-digit login code"
-                style={{ marginRight: 15 }}
+                hintText="Enter your 8-digit login code"
+                style={{ marginRight: 65 }}
                 onChange={this.handleIssuerIdValueChange.bind(this)}
                 floatingLabelText="Issuer Login Id"
                 type="password"
