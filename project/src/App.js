@@ -45,13 +45,9 @@ class App extends Component {
       locationDefault: -1,
       locations: [{ "loc": "Hyderabad" },
       { "loc": "Bangalore" },
-      { "loc": "Chennai" },
-      { "loc": "Pune" },
-      { "loc": "NCR" },
-      { "loc": "Kochi" },
-      { "loc": "Kolkata" },
-      { "loc": "Ahmedabad" },
-      { "loc": "Mumbai" }],
+      { "loc": "Noida" },
+      { "loc": "GSMO" },
+      { "loc": "Pune" }],
       buildingDefault: -1,
       buildings: [],
       locationNotSetDialogOpen: false,
@@ -166,9 +162,9 @@ class App extends Component {
         this.setState(
           {
             buildings: [
-              { "building": "Building 1" },
-              { "building": "Building 2" },
-              { "building": "Building 3" }
+              { "building": "B#1 Reception Lobby" },
+              { "building": "B#2 Reception Lobby" },
+              { "building": "B#3 Reception Lobby" }
 
             ]
           });
@@ -177,18 +173,24 @@ class App extends Component {
         this.setState(
           {
             buildings: [
-              { "building": "Vigyan" },
-              { "building": "Signature" },
+              { "building": "Vigyan Reception Lobby" },
+              { "building": "GTSC Signature Cafe 3rd Floor" },
+              { "building": "GTSC Embassy Reception 3rd Floor" },              
+              { "building": "GTSC Embassy Cafe 5th Floor" },
+              { "building": "Manyata Tech Park Reception Lobby" },
+              { "building": "We Works 5th Floor Pantry" },
+              { "building": "JNRCT Reception Lobby" }
+              
+              
             ]
           });
         break;
 
-      case "NCR":
+      case "Noida":
         this.setState(
           {
             buildings: [
-              { "building": "Gurgaon" },
-              { "building": "New Delhi" },
+              { "building": "ETT In Person Distribution" }
             ]
           });
         break;
@@ -197,53 +199,24 @@ class App extends Component {
         this.setState(
           {
             buildings: [
-              { "building": "Kumar Business Centre" },
+              { "building": "KBC Ivory Conf Room" },
+              { "building": "Pansheel IDC Reception" }
+              
             ]
           });
         break;
 
-      case "Mumbai":
+      case "GSMO":
         this.setState(
           {
             buildings: [
-              { "building": "Windsor Building" },
-            ]
-          });
-        break;
-
-      case "Kolkata":
-        this.setState(
-          {
-            buildings: [
-              { "building": "Millennium City Tower 2" },
-            ]
-          });
-        break;
-
-      case "Kochi":
-        this.setState(
-          {
-            buildings: [
-              { "building": "Business Communication Center" },
-            ]
-          });
-        break;
-
-      case "Chennai":
-        this.setState(
-          {
-            buildings: [
-              { "building": "Prestige Polygon" },
-              { "building": "Millenia Business Park" },
-            ]
-          });
-        break;
-
-      case "Ahmedabad":
-        this.setState(
-          {
-            buildings: [
-              { "building": "The Pride Hotel" },
+              { "building": "Mumbai Customer Area" },
+              { "building": "Gurugram Customer Area" },
+              { "building": "Kolkata Recreation Area" },
+              { "building": "Chennai RMZ Recreation Area" },
+              { "building": "Chennai Poly MPR-1" },              
+              { "building": "Hyd Jubilee Pantry Area" },
+              { "building": "Bangalore Reception Area" }              
             ]
           });
         break;
