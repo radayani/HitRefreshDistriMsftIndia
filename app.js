@@ -63,7 +63,7 @@ app.get('/api/validate', (req, res, err) => {
             if (result) {
               if (result.Received['_'] == true) {                
                 console.log(`book has already been collected by the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building }`);
-                res.status(409).json({ "message": `Book Already Collected by ${result.Alias['_']}` }).end();
+                res.status(409).json({ "message": `Book Already Collected for Employee: ${result.Alias['_']}` }).end();
               }
               else {
                 var entGen = azure.TableUtilities.entityGenerator;
@@ -74,7 +74,7 @@ app.get('/api/validate', (req, res, err) => {
                   Received: true,
                   CollectedFrom: entGen.String(req.query.location + " " + req.query.building)
                 }
-                tableService.mergeEntity('employees', task, function (err, result, respose) {
+                tableService.mergeEntity('employees', task, function (err) {
                   if (!error) {
                     console.log(`book has been provided to the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building }`);
 
@@ -97,7 +97,7 @@ app.get('/api/validate', (req, res, err) => {
           else {
             console.log(`Record Not Found for this employee id.  empId: ${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building}`);
             // console.log("Record Not Found for this employee id !!");
-            res.status(404).json({ "message": `Employee with ID ${req.query.id} Not Found in DB` }).end();
+            res.status(404).json({ "message": `Record Not Found in DB having Emp ID: ${req.query.id}` }).end();
           }
         });
 
