@@ -62,6 +62,10 @@ app.get('/api/validate', (req, res, err) => {
             // result contains the entity
             if (result) {
               if (result.Received['_'] == true) {
+                console.log("RESULT ALIAS:");
+                console.log(result.Alias['_']);
+                console.log(result.Alias['$']);
+                
                 console.log(`book has already been collected by the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building }`);
                 res.status(409).json({ "message": "Book Already Collected!" }).end();
               }
