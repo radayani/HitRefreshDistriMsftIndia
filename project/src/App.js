@@ -31,7 +31,7 @@ const style = {
     width: 350
   },
   customWidthLocation: {
-    width: 180
+    width: 200
   }  
 };
 
