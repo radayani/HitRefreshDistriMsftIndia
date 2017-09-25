@@ -26,13 +26,13 @@ const muiTheme = getMuiTheme({
 
 const style = {
   margin: 1,
-  marginBottom:70,
+  marginBottom: 70,
   customWidthBuilding: {
     width: 350
   },
   customWidthLocation: {
     width: 200
-  }  
+  }
 };
 
 
@@ -60,7 +60,8 @@ class App extends Component {
       Message: "",
       loginPage: true,
       issuerId: "",
-      issuerIdWrong:false
+      issuerIdWrongDialogOpen: false,
+      issuerIdAlreadyInUseDialogOpen: false
 
     }
   }
@@ -83,13 +84,13 @@ class App extends Component {
             status: response.status
           })))
         .then(res => {
-          if(res.status == 200)
-          this.setState({ loginPage: false }, function () 
-            { console.log("changed loginPage state") })
-          else
-          this.setState({ issuerIdWrong: true, issuerIdNotSetDialogOpen:true }, function () 
-          { console.log("WRONG!!!!!") })
-            
+          if (res.status == 200)
+            this.setState({ loginPage: false }, function () { console.log("changed loginPage state") });
+          else if (res.status == 300)
+            this.setState({  issuerIdAlreadyInUseDialogOpen: true });
+          else if(res.status == 404)
+          this.setState({  issuerIdWrongDialogOpen: true });          
+          
         })
         .catch(function (err) {
           console.log('Fetch Error :-S', err);
@@ -98,12 +99,12 @@ class App extends Component {
 
     }
     if (this.state.issuerId === "")
-      this.setState({ issuerIdNotSetDialogOpen: true }, function () { console.log("issuerIdNotSetDialogOpen " + this.state.issuerIdNotSetDialogOpen + "issuerIdNotSetDialogOpen:true"); });
+      this.setState({ issuerIdNotSetDialogOpen: true });
 
     if (this.state.locationDefault === -1)
-      this.setState({ locationNotSetDialogOpen: true }, function () { console.log("locationDefault " + this.state.locationDefault + "locationNotSetDialogOpen:true"); });
+      this.setState({ locationNotSetDialogOpen: true });
     if (this.state.buildingDefault === -1)
-      this.setState({ buildingNotSetDialogOpen: true }, function () { console.log("buildingDefault" + this.state.buildingDefault + "buildingNotSetDialogOpen:true"); });
+      this.setState({ buildingNotSetDialogOpen: true });
 
   }
 
@@ -165,9 +166,9 @@ class App extends Component {
         this.setState(
           {
             buildings: [
-              { "building": "B#1 Reception Lobby" },
-              { "building": "B#2 Reception Lobby" },
-              { "building": "B#3 Reception Lobby" }
+              { "building": "B1 Reception Lobby" },
+              { "building": "B2 Reception Lobby" },
+              { "building": "B3 Reception Lobby" }
 
             ]
           });
@@ -178,13 +179,13 @@ class App extends Component {
             buildings: [
               { "building": "Vigyan Reception Lobby" },
               { "building": "GTSC Signature Cafe 3rd Floor" },
-              { "building": "GTSC Embassy Reception 3rd Floor" },              
+              { "building": "GTSC Embassy Reception 3rd Floor" },
               { "building": "GTSC Embassy Cafe 5th Floor" },
               { "building": "Manyata Tech Park Reception Lobby" },
               { "building": "We Works 5th Floor Pantry" },
               { "building": "JNRCT Reception Lobby" }
-              
-              
+
+
             ]
           });
         break;
@@ -204,7 +205,7 @@ class App extends Component {
             buildings: [
               { "building": "KBC Ivory Conf Room" },
               { "building": "Pansheel IDC Reception" }
-              
+
             ]
           });
         break;
@@ -217,9 +218,9 @@ class App extends Component {
               { "building": "Gurugram Customer Area" },
               { "building": "Kolkata Recreation Area" },
               { "building": "Chennai RMZ Recreation Area" },
-              { "building": "Chennai Poly MPR-1" },              
+              { "building": "Chennai Poly MPR-1" },
               { "building": "Hyd Jubilee Pantry Area" },
-              { "building": "Bangalore Reception Area" }              
+              { "building": "Bangalore Reception Area" }
             ]
           });
         break;
@@ -241,7 +242,7 @@ class App extends Component {
     this.setState({ buildingNotSetDialogOpen: false });
   }
   handleIssuerIdDialogRequestClose() {
-    this.setState({ issuerIdNotSetDialogOpen: false,issuerIdWrong:false });
+    this.setState({ issuerIdNotSetDialogOpen: false, issuerIdWrongDialogOpen: false, issuerIdAlreadyInUseDialogOpen: false });
   }
   handleEmpIdDialogRequestClose() {
     this.setState({ empIdNotSetDialogOpen: false });
@@ -263,10 +264,10 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           {/* <h1> <br/><span style={{color:blue100}}>Hit Refresh</span><br/></h1> <h3> <span style={{color:blue100}}><pre>     - Satya Nadella</pre></span></h3><h1>Book<br/>Distribution<br/></h1> */}
-          
-          <img src='/imgs/satya.png' className="App-header"  alt="logo" />
+
+          <img src='/imgs/satya.png' className="App-header" alt="logo" />
           {/* <p> Distribution</p> */}
-        
+
         </div>
         <div className="App-footer" style={{ backgroundColor: blue100 }}>
           <FooterContent />
@@ -340,7 +341,7 @@ class App extends Component {
               <TextField className="App-intro"
                 hintText="Employee Id"
                 style={{ marginRight: 15 }}
-                
+
                 floatingLabelText="Employee Id"
                 value={this.state.empId}
                 onChange={this.handleEmployeeIdValueChange.bind(this)}
@@ -373,7 +374,7 @@ class App extends Component {
           </Dialog>
         </MuiThemeProvider>
 
-        {(this.state.issuerIdNotSetDialogOpen && this.state.issuerIdWrong)
+        {this.state.issuerIdWrongDialogOpen
           &&
 
           <MuiThemeProvider muiTheme={muiTheme}>
@@ -382,7 +383,7 @@ class App extends Component {
               style={{ width: 300 }}
               contentStyle={{ color: fullWhite }}
               bodyStyle={{ backgroundColor: redA700 }}
-              open={this.state.issuerIdNotSetDialogOpen}
+              open={this.state.issuerIdWrongDialogOpen}
               message="Incorrect Issuer Id"
               autoHideDuration={2100}
               onRequestClose={this.handleIssuerIdDialogRequestClose.bind(this)} />
@@ -390,7 +391,25 @@ class App extends Component {
 
         }
 
-        {(this.state.issuerIdNotSetDialogOpen && !this.state.issuerIdWrong)
+        {this.state.issuerIdAlreadyInUseDialogOpen
+          &&
+
+          <MuiThemeProvider muiTheme={muiTheme}>
+
+            <Snackbar
+              style={{ width: 300 }}
+              contentStyle={{ color: fullWhite }}
+              bodyStyle={{ backgroundColor: redA700 }}
+              open={this.state.issuerIdAlreadyInUseDialogOpen}
+              message="Issuer Id Already in Use"
+              autoHideDuration={2100}
+              onRequestClose={this.handleIssuerIdDialogRequestClose.bind(this)} />
+          </MuiThemeProvider>
+
+        }
+
+
+        {this.state.issuerIdNotSetDialogOpen
           &&
 
           <MuiThemeProvider muiTheme={muiTheme}>
