@@ -45,7 +45,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 
-
+var issuerId = null;
 //*******VALIDATE API**********//
 app.get('/api/validate', (req, res, err) => {
   tableService.createTableIfNotExists('employees', function (error, result, response) {
@@ -62,7 +62,7 @@ app.get('/api/validate', (req, res, err) => {
             // result contains the entity
             if (result) {
               if (result.Received['_'] == true) {
-                console.log(`book has already been collected by the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building}`);
+                console.log(`book has already been collected by the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building} \n IssuerId: ${issuerId}`);
                 res.status(409).json({ "message": `Book Already Collected for Employee: ${result.Alias['_']}` }).end();
               }
               else {
@@ -76,13 +76,13 @@ app.get('/api/validate', (req, res, err) => {
                 }
                 tableService.mergeEntity('employees', task, function (err) {
                   if (!error) {
-                    console.log(`book has been provided to the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building}`);
+                    console.log(`book has been provided to the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building} \n IssuerId: ${issuerId}`);
 
                     res.status(200).json({ "message": `Confirm Name & then Provide the Book to ${result.Alias['_']}` }).end();
 
                   }
                   else {
-                    console.log(`Something Went Wrong: err:  \n EmployeeId: ${req.query.id} IssueLocation: ${req.query.location} IssueBuilding: ${req.query.building}`);
+                    console.log(`Something Went Wrong: err:  \n EmployeeId: ${req.query.id} IssueLocation: ${req.query.location} IssueBuilding: ${req.query.building} \n IssuerId: ${issuerId}`);
                     // console.log(error + "= Something went wrong!");
                     res.status(200).json({ "message": err + "...msg" }).end();
 
@@ -91,11 +91,11 @@ app.get('/api/validate', (req, res, err) => {
               }
             }
             else {
-              console.log(`Result not created. error:  EmployeeId: ${req.query.id} \n IssueLocation: ${req.query.location} IssueBuilding: ${req.query.building}`);
+              console.log(`Result not created. error:  EmployeeId: ${req.query.id} \n IssueLocation: ${req.query.location} IssueBuilding: ${req.query.building} \n IssuerId: ${issuerId}`);
             }
           }
           else {
-            console.log(`Record Not Found for this employee id.  empId: ${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building}`);
+            console.log(`Record Not Found for this employee id.  empId: ${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building} \n IssuerId: ${issuerId}`);
             // console.log("Record Not Found for this employee id !!");
             res.status(404).json({ "message": `Record Not Found in DB having Emp ID: ${req.query.id}` }).end();
           }
@@ -105,7 +105,7 @@ app.get('/api/validate', (req, res, err) => {
 
     }
     else {
-      console.log(`table which stores the employee data does not already exists EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n  IssueBuilding: ${req.query.building}`);
+      console.log(`table which stores the employee data does not already exists EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n  IssueBuilding: ${req.query.building} \n IssuerId: ${issuerId}`);
       // console.log("table which stores the employee data does not already exists!");
     }
   });
@@ -153,6 +153,7 @@ app.get('/api/login', (req, res, err) => {
 
 
                     console.log(`Entry updated in Db for the issue address. Login Success. IssuerId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building}`);
+                    issuerId = req.query.id;
                     res.status(200).json({ "message": "Login Success!" }).end();
 
 
