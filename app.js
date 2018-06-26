@@ -54,7 +54,7 @@ function fetchAllEntities(array, token, callback){
   .where('Received eq ?' ,true);
 
   var options = {payloadFormat: "application/json;odata=nometadata"}
-  tableService.queryEntities('employees', query, token, options, function(error, result, response) {
+  tableService.queryEntities('IGDparticipantEmployees', query, token, options, function(error, result, response) {
     if (!error) {
       // console.log("result.entries: " + result.entries.length);
       array.push.apply(array, result.entries);
@@ -85,7 +85,7 @@ function fetchAllEntities(array, token, callback){
 //*******COUNT REGISTRATIONS API**********//
 app.get('/api/countRegistrations', (req, res, err) => {
   // var client = azureTable.getDefaultClient();
-  // client.queryEntities('employees', {
+  // client.queryEntities('IGDparticipantEmployees', {
   //   query: azureTable.Query.create('PartitionKey', '==', 'A'),
   //   onlyFields: ['Received', 'True']
   //  }, function(err, data, continuation) {
@@ -114,7 +114,7 @@ app.get('/api/countRegistrations', (req, res, err) => {
 
 //*******VALIDATE API**********//
 app.get('/api/validate', (req, res, err) => {
-  tableService.createTableIfNotExists('employees', function (error, result, response) {
+  tableService.createTableIfNotExists('IGDparticipantEmployees', function (error, result, response) {
     if (!error) {
       // table exists or created
       // result contains true if created; false if already exists
@@ -123,7 +123,7 @@ app.get('/api/validate', (req, res, err) => {
       }
       else {
         console.log("table already existed!")
-        tableService.retrieveEntity('employees', "A", req.query.id + "", function (err, result, response) {
+        tableService.retrieveEntity('IGDparticipantEmployees', "A", req.query.id + "", function (err, result, response) {
           if (!err) {
             // result contains the entity
             if (result) {          
@@ -141,7 +141,7 @@ app.get('/api/validate', (req, res, err) => {
                   Received: true,
                   CollectedFrom: entGen.String(req.query.location + " " + req.query.building)
                 }
-                tableService.mergeEntity('employees', task, function (err) {
+                tableService.mergeEntity('IGDparticipantEmployees', task, function (err) {
                   if (!error) {
                     console.log(`book has been provided to the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building} \n IssuerId: ${issuerId}`);
 
