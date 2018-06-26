@@ -11,6 +11,8 @@ import FlatButton from 'material-ui/FlatButton';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import FaRefresh from 'react-icons/lib/fa/refresh';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import './App.css';
 
 
@@ -35,6 +37,15 @@ const style = {
   },
   customWidthLocation: {
     width: 200
+  }, 
+  card: {
+    width: 200,
+    align: 'center',
+    textAlign: 'center'
+  },
+  title: {
+    marginBottom: 16,
+    fontSize: 14,
   }
 };
 
@@ -65,7 +76,8 @@ class App extends Component {
       issuerId: "",
       issuerIdWrongDialogOpen: false,
       issuerIdAlreadyInUseDialogOpen: false,
-      countOfRegistrations:0
+      countOfRegistrations:0,
+      countHappening:false
 
     }
   }
@@ -112,12 +124,8 @@ class App extends Component {
 
   }
 
-
-
-
-  handleValidateButton = (x) => {
-
-    console.log(this.state.empId);
+  handleRefreshButton = (x) => {
+    this.setState({countHappening:true});
     fetch(`/api/countRegistrations`, {
       headers: {
         'Content-Type': 'application/json',
@@ -131,7 +139,7 @@ class App extends Component {
       status: response.status
     })))
     .then(res => {
-      this.setState({countOfRegistrations: res.data.count}, function(){
+      this.setState({countOfRegistrations: res.data.count, countHappening:false}, function(){
         console.log(this.state.countOfRegistrations);
       });
       console.log(res.status, res.data.count);
@@ -139,8 +147,11 @@ class App extends Component {
     .catch(function(err){
       console.log('Fetch error: ', err);
     });
+  }
 
 
+  handleValidateButton = (x) => {
+    console.log(this.state.empId);
     if (this.state.locationDefault !== -1 && this.state.buildingDefault !== -1 && this.state.empId !== "") {
       fetch(`/api/validate?id=${this.state.empId}&location=${this.state.locationDefault}&building=${this.state.buildingDefault}`, {
 
@@ -376,7 +387,6 @@ class App extends Component {
               />
             </MuiThemeProvider>
             <MuiThemeProvider muiTheme={muiTheme}>
-
               <RaisedButton
                 label="Validate"
                 style={style}
@@ -384,23 +394,18 @@ class App extends Component {
                 onTouchTap={this.handleValidateButton.bind(this, "dsfdsfdsf")}
 
               />
-
-
             </MuiThemeProvider>
-          </div>
-        }
-
-        {!this.state.loginPage &&
-          <div>
             <MuiThemeProvider muiTheme={muiTheme}>
-
-              <Card className={classes.card}>
+              <Card style={{ marginRight: 50, marginLeft: 50 }}>
                 <CardContent>
-                  <Typography className={classes.title} color="textSecondary">
+                  <Typography style={style.title} color="textSecondary">
                     No. of Registrations Done
                   </Typography>
                   <Typography variant="headline" component="h2">
-                    {this.state.countOfRegistrations}
+                    {this.state.countOfRegistrations} 
+        {this.state.countHappening == false && <FaRefresh style ={{marginLeft:50}} onClick = {this.handleRefreshButton.bind(this)}/>}
+        {this.state.countHappening == true && <CircularProgress style ={{marginLeft:50}} size={20}/> 
+                    }
                   </Typography>
                 </CardContent>
               </Card>
@@ -408,7 +413,7 @@ class App extends Component {
           </div>
         }
 
-
+       
         <MuiThemeProvider muiTheme={muiTheme}>
 
           <Dialog
