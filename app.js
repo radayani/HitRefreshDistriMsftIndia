@@ -19,7 +19,7 @@ var bodyParser = require('body-parser');
 var azure = require('azure-storage');
 // var azureTable = require('azure-table-node');
 var fs = require('fs');
-var stringifiedJson = fs.readFileSync('../getValues.json', 'utf8');
+var stringifiedJson = fs.readFileSync('getValues.json', 'utf8');
 var jsonSecrets = JSON.parse(stringifiedJson);
 
 var accessKey = jsonSecrets.storageAccountKey; // '5cBnLmOhF5AA/RC2y2TRYjfATfj+GOUOMT4hsAlM+CMDQaLDMrrY7GOLgdEA0/wSJeGVEOCtwcmU2U3iCBotXg==';
@@ -48,6 +48,39 @@ app.use('/users', users);
 
 var issuerId = null;
 
+function fetchAllEntities(array, token, callback){
+  var query = new azure.TableQuery().select('Received')
+  // .where('PartitionKey eq ?', 'A')
+  .where('Received eq ?' ,true);
+
+  var options = {payloadFormat: "application/json;odata=nometadata"}
+  tableService.queryEntities('employees', query, token, options, function(error, result, response) {
+    if (!error) {
+      // console.log("result.entries: " + result.entries.length);
+      array.push.apply(array, result.entries);
+      // var token = result.continuationToken;
+      // console.log("token: " + result.continuationToken);
+      if(result.continuationToken)
+      {
+        // console.log("token: " + result.continuationToken);
+        fetchAllEntities(array, result.continuationToken,callback);
+      }
+      else
+      {
+        // console.log("NULL");
+        console.log("total: " + array.length);
+        
+        // console.log("count: " + ar);
+        // result.entries contains entities matching the query
+        callback();
+      }
+      
+    }
+    else{
+      console.log("errrr: " + err);
+    }
+  });
+}
 
 //*******COUNT REGISTRATIONS API**********//
 app.get('/api/countRegistrations', (req, res, err) => {
@@ -66,23 +99,15 @@ app.get('/api/countRegistrations', (req, res, err) => {
   //    // data contains the array of objects (entities)
   //    // continuation is undefined or two element array to be passed to next query
   //  });
-  var count = 0;
-  var tableService = azure.createTableService();
-  var query = new azure.TableQuery()
-    // .top(5)
-    .where('Received eq ?', 'True');
- 
-  tableService.queryEntities('employees', query, null, function(error, result, response) {
-    if (!error) {
-      console.log("result.entries: " + result.entries);
-      result.entries.forEach((entry) => {
-        count = count +1;
-      })
-      console.log("count: " + count);
-      // result.entries contains entities matching the query
-      res.status(409).json({ "count": `${count}}` }).end();
-    }
-  });
+  // var count = 0;
+  var array = [];
+  // console.log("count initialized: " + array.length);
+  // var tableService = azure.createTableService();
+  
+  fetchAllEntities(array, null, function(){
+    res.status(200).json({ "count": `${array.length}` }).end();  
+  })
+  
 });
 
 
