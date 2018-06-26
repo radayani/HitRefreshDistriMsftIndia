@@ -291,7 +291,7 @@ class App extends Component {
         <div className="App-header">
           {/* <h1> <br/><span style={{color:blue100}}>Hit Refresh</span><br/></h1> <h3> <span style={{color:blue100}}><pre>     - Satya Nadella</pre></span></h3><h1>Book<br/>Distribution<br/></h1> */}
 
-          <img src='/imgs/satya.png' className="App-header" alt="logo" />
+          <img src='/imgs/igdmeet.jpg' className="App-header" alt="logo" />
           {/* <p> Distribution</p> */}
 
         </div>

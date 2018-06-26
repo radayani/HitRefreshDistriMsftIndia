@@ -70,7 +70,6 @@ app.get('/api/countRegistrations', (req, res, err) => {
   var tableService = azure.createTableService();
   var query = new azure.TableQuery()
     // .top(5)
-    .where('PartitionKey eq ?', 'A')
     .where('Received eq ?', 'True');
  
   tableService.queryEntities('employees', query, null, function(error, result, response) {
@@ -102,8 +101,8 @@ app.get('/api/validate', (req, res, err) => {
         tableService.retrieveEntity('employees', "A", req.query.id + "", function (err, result, response) {
           if (!err) {
             // result contains the entity
-            if (result) {
-              
+            if (result) {          
+                
               if (result.Received['_'] == true) {
                 console.log(`book has already been collected by the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building} \n IssuerId: ${issuerId}`);
                 res.status(409).json({ "message": `Book Already Collected for Employee: ${result.Alias['_']}` }).end();
