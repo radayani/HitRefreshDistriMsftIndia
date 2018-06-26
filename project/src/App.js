@@ -8,6 +8,9 @@ import DropDownMenu from 'material-ui/DropDownMenu';
 import Snackbar from 'material-ui/Snackbar';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 import './App.css';
 
 
@@ -61,7 +64,8 @@ class App extends Component {
       loginPage: true,
       issuerId: "",
       issuerIdWrongDialogOpen: false,
-      issuerIdAlreadyInUseDialogOpen: false
+      issuerIdAlreadyInUseDialogOpen: false,
+      countOfRegistrations:0
 
     }
   }
@@ -114,6 +118,28 @@ class App extends Component {
   handleValidateButton = (x) => {
 
     console.log(this.state.empId);
+    fetch(`/api/countRegistrations`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+
+      }
+    })
+    .then(response => 
+    response.json().then(data => ({
+      data: data,
+      status: response.status
+    })))
+    .then(res => {
+      this.setState({countOfRegistrations: res.data.count}, function(){
+        console.log(this.state.countOfRegistrations);
+      });
+      console.log(res.status, res.data.count);
+    })
+    .catch(function(err){
+      console.log('Fetch error: ', err);
+    });
+
 
     if (this.state.locationDefault !== -1 && this.state.buildingDefault !== -1 && this.state.empId !== "") {
       fetch(`/api/validate?id=${this.state.empId}&location=${this.state.locationDefault}&building=${this.state.buildingDefault}`, {
@@ -363,6 +389,26 @@ class App extends Component {
             </MuiThemeProvider>
           </div>
         }
+
+        {!this.state.loginPage &&
+          <div>
+            <MuiThemeProvider muiTheme={muiTheme}>
+
+              <Card className={classes.card}>
+                <CardContent>
+                  <Typography className={classes.title} color="textSecondary">
+                    No. of Registrations Done
+                  </Typography>
+                  <Typography variant="headline" component="h2">
+                    {this.state.countOfRegistrations}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </MuiThemeProvider>
+          </div>
+        }
+
+
         <MuiThemeProvider muiTheme={muiTheme}>
 
           <Dialog

@@ -17,6 +17,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var azure = require('azure-storage');
+// var azureTable = require('azure-table-node');
 var fs = require('fs');
 var stringifiedJson = fs.readFileSync('../getValues.json', 'utf8');
 var jsonSecrets = JSON.parse(stringifiedJson);
@@ -46,6 +47,47 @@ app.use('/', index);
 app.use('/users', users);
 
 var issuerId = null;
+
+
+//*******COUNT REGISTRATIONS API**********//
+app.get('/api/countRegistrations', (req, res, err) => {
+  // var client = azureTable.getDefaultClient();
+  // client.queryEntities('employees', {
+  //   query: azureTable.Query.create('PartitionKey', '==', 'A'),
+  //   onlyFields: ['Received', 'True']
+  //  }, function(err, data, continuation) {
+  //    // err is null
+  //    var count = 0;
+  //    data.forEach((v) => {
+  //      count = count +1;
+  //    })
+  //    res.status(200).json({ "count": `${count}` }).end();
+
+  //    // data contains the array of objects (entities)
+  //    // continuation is undefined or two element array to be passed to next query
+  //  });
+  var count = 0;
+  var tableService = azure.createTableService();
+  var query = new azure.TableQuery()
+    // .top(5)
+    .where('PartitionKey eq ?', 'A')
+    .where('Received eq ?', 'True');
+ 
+  tableService.queryEntities('employees', query, null, function(error, result, response) {
+    if (!error) {
+      console.log("result.entries: " + result.entries);
+      result.entries.forEach((entry) => {
+        count = count +1;
+      })
+      console.log("count: " + count);
+      // result.entries contains entities matching the query
+      res.status(409).json({ "count": `${count}}` }).end();
+    }
+  });
+});
+
+
+
 //*******VALIDATE API**********//
 app.get('/api/validate', (req, res, err) => {
   tableService.createTableIfNotExists('employees', function (error, result, response) {
@@ -61,13 +103,14 @@ app.get('/api/validate', (req, res, err) => {
           if (!err) {
             // result contains the entity
             if (result) {
+              
               if (result.Received['_'] == true) {
                 console.log(`book has already been collected by the employee EmployeeId:${req.query.id} \n IssueLocation: ${req.query.location} \n IssueBuilding: ${req.query.building} \n IssuerId: ${issuerId}`);
                 res.status(409).json({ "message": `Book Already Collected for Employee: ${result.Alias['_']}` }).end();
               }
               else {
                 var entGen = azure.TableUtilities.entityGenerator;
-
+                
                 var task = {
                   PartitionKey: "A",
                   RowKey: entGen.String(req.query.id),
