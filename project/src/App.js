@@ -350,10 +350,10 @@ class App extends Component {
 
             <MuiThemeProvider muiTheme={muiTheme}>
               <TextField className="App-intro"
-                hintText="Enter your 8-digit login code"
+                hintText="Enter your 8-digit OTP"
                 style={{ marginRight: 65 }}
                 onChange={this.handleIssuerIdValueChange.bind(this)}
-                floatingLabelText="Issuer Login Id"
+                floatingLabelText="Issuer OTP"
                 type="password"
               />
             </MuiThemeProvider>
@@ -435,7 +435,7 @@ class App extends Component {
               contentStyle={{ color: fullWhite }}
               bodyStyle={{ backgroundColor: redA700 }}
               open={this.state.issuerIdWrongDialogOpen}
-              message="Incorrect Issuer Id"
+              message="Invalid Issuer OTP"
               autoHideDuration={2100}
               onRequestClose={this.handleIssuerIdDialogRequestClose.bind(this)} />
           </MuiThemeProvider>
@@ -452,7 +452,7 @@ class App extends Component {
               contentStyle={{ color: fullWhite }}
               bodyStyle={{ backgroundColor: redA700 }}
               open={this.state.issuerIdAlreadyInUseDialogOpen}
-              message="Issuer Id Already in Use"
+              message="Issuer OTP Already in Use"
               autoHideDuration={2100}
               onRequestClose={this.handleIssuerIdDialogRequestClose.bind(this)} />
           </MuiThemeProvider>
@@ -470,7 +470,7 @@ class App extends Component {
               contentStyle={{ color: fullWhite }}
               bodyStyle={{ backgroundColor: redA700 }}
               open={this.state.issuerIdNotSetDialogOpen}
-              message="Please fill Issuer Id Provided to You"
+              message="Please fill Issuer OTP Provided to You"
               autoHideDuration={2000}
               onRequestClose={this.handleIssuerIdDialogRequestClose.bind(this)} />
           </MuiThemeProvider>
