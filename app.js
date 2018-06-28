@@ -139,7 +139,8 @@ app.get('/api/validate', (req, res, err) => {
                   PartitionKey: "A",
                   RowKey: entGen.String(req.query.id),
                   Received: true,
-                  CollectedFrom: entGen.String(req.query.location + " " + req.query.building)
+                  CollectedFrom: entGen.String(req.query.location + " " + req.query.building),
+                  RegistrationDoneBy: entGen.String(req.query.otp)
                 }
                 tableService.mergeEntity('IGDparticipantEmployees', task, function (err) {
                   if (!error) {

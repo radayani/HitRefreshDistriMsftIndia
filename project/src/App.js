@@ -73,7 +73,7 @@ class App extends Component {
       empIdNotSetDialogOpen: false,
       Message: "",
       loginPage: true,
-      issuerId: "",
+      issuerOTP: "",
       issuerIdWrongDialogOpen: false,
       issuerIdAlreadyInUseDialogOpen: false,
       countOfRegistrations:0,
@@ -84,9 +84,9 @@ class App extends Component {
 
 
   handleLoginButton = (x) => {
-    if (this.state.issuerId !== "" && this.state.locationDefault !== -1 && this.state.buildingDefault !== -1) {
+    if (this.state.issuerOTP !== "" && this.state.locationDefault !== -1 && this.state.buildingDefault !== -1) {
 
-      fetch(`/api/login?id=${this.state.issuerId}&location=${this.state.locationDefault}&Building=${this.state.buildingDefault}`, {
+      fetch(`/api/login?id=${this.state.issuerOTP}&location=${this.state.locationDefault}&Building=${this.state.buildingDefault}`, {
 
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ class App extends Component {
 
 
     }
-    if (this.state.issuerId === "")
+    if (this.state.issuerOTP === "")
       this.setState({ issuerIdNotSetDialogOpen: true });
 
     if (this.state.locationDefault === -1)
@@ -153,7 +153,7 @@ class App extends Component {
   handleValidateButton = (x) => {
     console.log(this.state.empId);
     if (this.state.locationDefault !== -1 && this.state.buildingDefault !== -1 && this.state.empId !== "") {
-      fetch(`/api/validate?id=${this.state.empId}&location=${this.state.locationDefault}&building=${this.state.buildingDefault}`, {
+      fetch(`/api/validate?id=${this.state.empId}&location=${this.state.locationDefault}&building=${this.state.buildingDefault}&otp=${this.state.issuerOTP}`, {
 
         headers: {
           'Content-Type': 'application/json',
@@ -184,8 +184,8 @@ class App extends Component {
       this.setState({ empIdNotSetDialogOpen: true }, function () { console.log("empid default" + this.state.empId + "empIdNotSetDialogOpen:true"); });
   }
   handleIssuerIdValueChange(event, newValue) {
-    this.setState({ issuerId: newValue }, function () {
-      console.log(this.state.issuerId);
+    this.setState({ issuerOTP: newValue }, function () {
+      console.log(this.state.issuerOTP);
     });
   }
   handleEmployeeIdValueChange(event, newValue) {
