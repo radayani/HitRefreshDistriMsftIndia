@@ -1,7 +1,7 @@
 
 // added Application Insights to send events, traces and catch exception logs
 const appInsights = require("applicationinsights");
-appInsights.setup("53191698-6269-4b46-b617-9d9624b6726d")
+appInsights.setup("clientid")
   .setAutoCollectConsole(true)
   .setAutoDependencyCorrelation(false)
   .setAutoCollectRequests(true)
@@ -22,7 +22,7 @@ var fs = require('fs');
 var stringifiedJson = fs.readFileSync('../getValues.json', 'utf8');
 var jsonSecrets = JSON.parse(stringifiedJson);
 
-var accessKey = jsonSecrets.storageAccountKey; // '5cBnLmOhF5AA/RC2y2TRYjfATfj+GOUOMT4hsAlM+CMDQaLDMrrY7GOLgdEA0/wSJeGVEOCtwcmU2U3iCBotXg==';
+var accessKey = jsonSecrets.storageAccountKey;
 var storageAccount = jsonSecrets.storageAccountName; //'hitrefreshstorage'
 var tableService = azure.createTableService(storageAccount, accessKey);
 
